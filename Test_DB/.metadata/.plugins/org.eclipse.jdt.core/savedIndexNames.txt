@@ -1,0 +1,5 @@
+INDEX VERSION 1.134+D:\OneDrive - AXLE ICT SOLUTIONS SRL\Progetti\java\Test_DB\.metadata\.plugins\org.eclipse.jdt.core
+1865797976.index
+2981703305.index
+3640656969.index
+1771511760.index

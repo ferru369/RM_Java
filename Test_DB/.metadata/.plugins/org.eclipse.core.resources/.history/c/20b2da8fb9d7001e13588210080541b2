@@ -1,0 +1,59 @@
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.HashMap;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
+
+public class Responder implements HttpHandler {
+
+	HttpServer server;
+	
+	Responder (HttpServer server) {
+		this.server = server;
+	}
+	
+	@Override
+    public void handle(HttpExchange t) throws IOException {
+        		
+		String response;
+		String query = t.getRequestURI().getQuery();
+    	HashMap<String, String> parameters = Parameters.get(query);
+     
+        if (parameters.get("ops").equals("stop")) {
+            response = "Server fermato correttamente.";
+            respond(response,t);
+            Server.stop(server);
+        } if (parameters.get("ops").equals("select")) {
+        	String campi = (String) parameters.get("campi");
+        	String tabelle = "presenze";
+        	response = "risultato";
+        	respond(response,t);
+        } if (parameters.get("ops").equals("insert")) {
+        	String campi = "'" + parameters.get("nome") + "', to_date('" + parameters.get("data") + "', 'DD-MM-YY')";
+        	String tabelle = "presenze";
+        	response = "faccio insert di " + campi;
+        	Db.insert(campi,tabelle);
+        	respond(response,t);
+        } else {
+        	response = "nulla da eseguire con \"" + parameters.get("ops") + "\"";
+        	respond(response,t);
+        }
+	}
+	
+	static void respond (String response, HttpExchange server) {
+		
+        try {
+			server.sendResponseHeaders(200, response.length());
+	        OutputStream os = server.getResponseBody();
+	        os.write(response.getBytes());
+	        os.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+	}
+	
+}
